@@ -7,7 +7,7 @@ import InputText from '../../components/inputs/InputText.vue';
 import { reactive } from 'vue';
 import type { SigninInterface } from '../../interfaces/user.interface';
 import { withMessage } from '../../utils/helpers/withMessage';
-import { minLength, required } from '@vuelidate/validators';
+import { email, minLength, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { AxiosError } from 'axios';
 import ButtonSubmit from '../../components/inputs/ButtonSubmit.vue';
@@ -24,7 +24,10 @@ export default {
       password: null,
     });
     const rules = {
-      email: { required: withMessage("L'email est requis", required) },
+      email: {
+        required: withMessage("L'email est requis", required),
+        email: withMessage("L'email n'est pas au bon format", email),
+      },
       password: {
         required: withMessage('Le mot de passe est requis', required),
         minLength: withMessage('Le mot de passe doit faire au moins 6 caractères', minLength(6)),
@@ -121,5 +124,3 @@ export default {
     </section>
   </article>
 </template>
-
-<style scoped></style>
