@@ -1,14 +1,27 @@
-import './assets/main.css'
+import './assets/main.css';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from 'vue';
 
-import App from './App.vue'
-import router from './router'
+import App from './App.vue';
+import router from './router';
 
-const app = createApp(App)
+/** STORE **/
+import { createPinia } from 'pinia';
+import piniaPersist from 'pinia-plugin-persistedstate';
 
-app.use(createPinia())
-app.use(router)
+/** TOAST **/
+import Toast, { POSITION, type PluginOptions } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
-app.mount('#app')
+const options: PluginOptions = {
+  position: POSITION.TOP_CENTER,
+};
+const pinia = createPinia();
+pinia.use(piniaPersist);
+
+const app = createApp(App);
+app.use(pinia);
+app.use(Toast, options);
+app.use(router);
+
+app.mount('#app');
