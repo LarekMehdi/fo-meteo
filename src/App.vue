@@ -10,7 +10,9 @@ import Navbar from './components/shared/Navbar.vue';
     </nav>
 
     <main class="flex-1 px-3 sm:px-6 lg:px-10 bg-gray-50 pt-8 pb-20">
-      <RouterView />
+      <div class="max-w-7xl mx-auto">
+        <RouterView />
+      </div>
     </main>
   </div>
 </template>
