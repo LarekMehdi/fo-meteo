@@ -5,18 +5,21 @@ import Card from '../../components/shared/Card.vue';
 import Row from '../../components/shared/Row.vue';
 import InputText from '../../components/inputs/InputText.vue';
 import { reactive } from 'vue';
-import type { SigninInterface } from '../../interfaces/user.interface';
+import type { AuthStoreInterface, SigninInterface } from '../../interfaces/user.interface';
 import { withMessage } from '../../utils/helpers/withMessage';
 import { email, minLength, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { AxiosError } from 'axios';
 import ButtonSubmit from '../../components/inputs/ButtonSubmit.vue';
 import { useRouter } from 'vue-router';
+import { AuthService } from '@/services/auth.service';
+import { useAuthStore } from '@/stores/auth.store';
 
 export default {
   setup() {
     const toast = useToast();
     const router = useRouter();
+    const authStore = useAuthStore();
 
     // FORM
     const signinForm = reactive<SigninInterface>({
@@ -41,7 +44,10 @@ export default {
       if (!isValid) return;
 
       try {
-        //TODO: appel api
+        const response: AuthStoreInterface = await AuthService.signin(signinForm);
+
+        authStore.setAuthState(response);
+        router.push('/forecast');
       } catch (e: unknown) {
         if (e instanceof AxiosError && e.response) {
           switch (e.response.status) {

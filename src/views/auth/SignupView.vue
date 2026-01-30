@@ -12,6 +12,7 @@ import Card from '../../components/shared/Card.vue';
 import { AxiosError } from 'axios';
 import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
+import { AuthService } from '@/services/auth.service';
 
 export default {
   setup() {
@@ -59,7 +60,9 @@ export default {
       if (!isValid) return;
 
       try {
-        //TODO: appel API
+        const { confirmPassword, ...payload } = signupForm;
+        await AuthService.signup(payload);
+        router.push('/signin');
         toast.success('Compte créé avec succés');
       } catch (e: unknown) {
         if (e instanceof AxiosError && e.response) {
