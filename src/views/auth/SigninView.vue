@@ -7,7 +7,7 @@ import InputText from '../../components/inputs/InputText.vue';
 import { reactive } from 'vue';
 import type { AuthStoreInterface, SigninInterface } from '../../interfaces/user.interface';
 import { withMessage } from '../../utils/helpers/withMessage';
-import { email, minLength, required } from '@vuelidate/validators';
+import { email, maxLength, minLength, required } from '@vuelidate/validators';
 import useVuelidate from '@vuelidate/core';
 import { AxiosError } from 'axios';
 import ButtonSubmit from '../../components/inputs/ButtonSubmit.vue';
@@ -30,6 +30,7 @@ export default {
       email: {
         required: withMessage("L'email est requis", required),
         email: withMessage("L'email n'est pas au bon format", email),
+        maxLength: withMessage("L'email ne peut pas dépasser 200 caractères", maxLength(200)),
       },
       password: {
         required: withMessage('Le mot de passe est requis', required),

@@ -42,6 +42,7 @@ export default {
       email: {
         required: withMessage("L'email est requis", required),
         email: withMessage("L'email n'est pas au bon format", email),
+        maxLength: withMessage("L'email ne peut pas dépasser 200 caractères", maxLength(200)),
       },
       password: {
         required: withMessage('Le mot de passe est requis', required),
