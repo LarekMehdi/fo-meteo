@@ -2,22 +2,35 @@
 import { useRouter } from 'vue-router';
 import NavLink from './NavLink.vue';
 import Row from './Row.vue';
+import { useAuthStore } from '@/stores/auth.store';
+import { computed } from 'vue';
+import ButtonCustom from '../inputs/ButtonCustom.vue';
 
 export default {
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
+    const isLoggedIn = computed(() => authStore.isLoggedIn);
 
     function goToHome() {
       router.push('/');
     }
 
+    function loggout() {
+      authStore.clearAuth();
+      goToHome();
+    }
+
     return {
+      isLoggedIn,
       goToHome,
+      loggout,
     };
   },
   components: {
     Row,
     NavLink,
+    ButtonCustom,
   },
 };
 </script>
@@ -28,10 +41,20 @@ export default {
       <div class="relative flex items-center gap-3 sm:gap-6">
         <p @click="goToHome" class="font-bold text-sm sm:text-base cursor-pointer">Météo</p>
 
-        <div class="hidden md:flex items-center gap-6">
+        <div v-if="isLoggedIn" class="hidden md:flex items-center gap-6">
           <NavLink to="/forecast">Prévisions</NavLink>
         </div>
       </div>
+    </template>
+
+    <template #right>
+      <ButtonCustom
+        v-if="isLoggedIn"
+        @click="loggout"
+        content="Se déconnecter"
+        buttonColor="bg-red-500"
+        buttonColorHover="hover:bg-red-700"
+      />
     </template>
   </Row>
 
