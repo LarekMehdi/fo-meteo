@@ -16,15 +16,15 @@ export default {
       router.push('/');
     }
 
-    function loggout() {
-      authStore.clearAuth();
+    function logout() {
+      authStore.logout();
       goToHome();
     }
 
     return {
       isLoggedIn,
       goToHome,
-      loggout,
+      logout,
     };
   },
   components: {
@@ -50,7 +50,7 @@ export default {
     <template #right>
       <ButtonCustom
         v-if="isLoggedIn"
-        @click="loggout"
+        @click="logout"
         content="Se déconnecter"
         buttonColor="bg-red-500"
         buttonColorHover="hover:bg-red-700"

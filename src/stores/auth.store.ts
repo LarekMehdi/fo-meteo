@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import type { AuthStoreInterface } from '../interfaces/user.interface';
+import { useApi } from '@/api/useApi';
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreInterface => ({
@@ -20,6 +21,19 @@ export const useAuthStore = defineStore('auth', {
       this.accessToken = null;
       this.refreshToken = null;
       this.user = null;
+    },
+    async logout() {
+      try {
+        if (this.refreshToken) {
+          await useApi().delete('auth/logout', {
+            headers: { 'X-Refresh-Token': this.refreshToken },
+          });
+        }
+      } catch (_e: unknown) {
+        console.warn('Erreur lors du logout');
+      } finally {
+        this.clearAuth();
+      }
     },
   },
   persist: true,
