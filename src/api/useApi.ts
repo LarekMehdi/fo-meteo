@@ -1,49 +1,59 @@
+import { useAuthStore } from '@/stores/auth.store';
 import axios, { type AxiosInstance } from 'axios';
-import qs from 'qs';
-import { useAuthStore } from '../stores/auth.store';
 
 export function useApi() {
-  const authStore = useAuthStore();
-  const accessToken = authStore.accessToken;
-  const refreshToken = authStore.refreshToken;
-
   const api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
-    paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'repeat' }),
   });
 
-  // Juste avant l'envoi de la requète
+  function isPublicRoute(url?: string) {
+    return url?.includes('auth/signup') || url?.includes('auth/signin');
+  }
+
   api.interceptors.request.use((config) => {
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    const authStore = useAuthStore();
+
+    if (authStore.accessToken) {
+      config.headers.Authorization = `Bearer ${authStore.accessToken}`;
     }
 
-    if (config.url === 'auth/logout') {
-      config.headers.Authorization = `Bearer ${refreshToken}`;
+    if (config.url?.includes('auth/refresh')) {
+      config.headers['X-Refresh-Token'] = authStore.refreshToken;
     }
 
     return config;
   });
 
-  // TODO: refreshToken
   api.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
+      const authStore = useAuthStore();
 
-      if (error.response && error.response.status === 401) {
-        authStore.clearAuth();
-        location.href = '/signin';
+      if (error.response?.status === 401 && !isPublicRoute(originalRequest.url)) {
+        if (originalRequest.url?.includes('auth/refresh') || !authStore.refreshToken) {
+          authStore.clearAuth();
+          location.href = '/signin';
+          return Promise.reject(error);
+        }
+
+        try {
+          const res = await api.get('auth/refresh');
+          authStore.setAuthState(res.data);
+          originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
+          return api(originalRequest);
+        } catch {
+          authStore.clearAuth();
+          location.href = '/signin';
+          return Promise.reject(error);
+        }
       }
-      if (
-        error.response &&
-        error.response.status === 403 &&
-        originalRequest.url !== 'auth/signup' &&
-        originalRequest.url !== 'auth/signin'
-      ) {
-        location.href = '/error/403';
-        console.log('Accés refusé');
+
+      if (error.response?.status === 403 && !isPublicRoute(originalRequest.url)) {
+        //TODO: location.href = '/error/403';
+        location.href = '/';
       }
+
       return Promise.reject(error);
     },
   );
