@@ -1,11 +1,15 @@
 <script lang="ts">
 import ButtonCustom from '@/components/inputs/ButtonCustom.vue';
 import Title from '@/components/shared/Title.vue';
+import { useAuthStore } from '@/stores/auth.store';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
+    const isLoggedIn = computed(() => authStore.isLoggedIn);
 
     function goToSignup() {
       router.push('/signup');
@@ -15,6 +19,7 @@ export default {
       router.push('/signin');
     }
     return {
+      isLoggedIn,
       goToSignup,
       goToSignin,
     };
@@ -34,7 +39,7 @@ export default {
     />
 
     <aside class="flex flex-col items-center justify-center gap-6 text-center">
-      <section class="flex flex-row gap-4 w-full justify-center items-center">
+      <section v-if="!isLoggedIn" class="flex flex-row gap-4 w-full justify-center items-center">
         <ButtonCustom @click="goToSignin" content="Se connecter" />
         <ButtonCustom @click="goToSignup" content="Créer un compte" />
       </section>
