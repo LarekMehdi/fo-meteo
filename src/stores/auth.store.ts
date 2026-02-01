@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', {
       this.refreshToken = null;
       this.user = null;
     },
+    // TODO: sortir dans authService
     async logout() {
       try {
         if (this.refreshToken) {
