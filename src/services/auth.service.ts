@@ -20,4 +20,10 @@ export abstract class AuthService {
   static async signin(signinData: SigninInterface): Promise<AuthStoreInterface> {
     return await AuthApi.signin(signinData);
   }
+
+  /** LOGOUT **/
+
+  static async logout(refreshToken: string) {
+    return await AuthApi.logout(refreshToken);
+  }
 }

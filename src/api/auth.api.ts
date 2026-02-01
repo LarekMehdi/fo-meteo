@@ -30,4 +30,16 @@ export abstract class AuthApi {
       throw e;
     }
   }
+
+  /** LOGOUT **/
+
+  static async logout(refreshToken: string) {
+    try {
+      await useApi().delete('auth/logout', {
+        headers: { 'X-Refresh-Token': refreshToken },
+      });
+    } catch (e: unknown) {
+      throw e;
+    }
+  }
 }
