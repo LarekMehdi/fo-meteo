@@ -4,7 +4,7 @@ import { type PropType } from 'vue';
 export default {
   props: {
     modelValue: {
-      type: Number as PropType<number | undefined>,
+      type: [Number, null] as PropType<number | null>,
       required: true,
     },
     label: {
@@ -64,8 +64,8 @@ export default {
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const onInput = (event: Event) => {
-      const value = (event.target as HTMLInputElement).value;
-      emit('update:modelValue', Number(value));
+      const raw = (event.target as HTMLInputElement).value;
+      emit('update:modelValue', raw === '' ? null : Number(raw));
     };
 
     return {
