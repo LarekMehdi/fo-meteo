@@ -6,6 +6,7 @@ import Card from '@/components/shared/Card.vue';
 import FormRow from '@/components/shared/FormRow.vue';
 import Row from '@/components/shared/Row.vue';
 import Title from '@/components/shared/Title.vue';
+import { getWeatherIcon } from '@/constants/weatherCode.constant';
 import type { ForecastFilterInterface } from '@/interfaces/filter.interface';
 import type {
   ForecastInterface,
@@ -99,6 +100,7 @@ export default {
       windSpeedUnit,
       todayHourlyForecast,
       forecast,
+      getWeatherIcon,
       searchForecast,
     };
   },
@@ -155,12 +157,12 @@ export default {
         <Card
           v-for="(hour, index) in todayHourlyForecast"
           :key="index"
-          class="min-w-[70px] h-[64px] p-1 flex flex-col items-center justify-center gap-1"
+          class="min-w-[100px] p-2 flex flex-col items-center gap-1"
         >
-          <span class="text-xs text-gray-400"> {{ hour.weatherCode }}</span>
+          <span class="text-2xl"> {{ getWeatherIcon(hour.weatherCode) }} </span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
           <span class="text-sm font-semibold"> {{ hour.temperature }}{{ temperatureUnit }} </span>
-          <span class="text-xs text-gray-400"> {{ hour.windSpeed10m }}{{ windSpeedUnit }} </span>
+          <span class="text-xs text-gray-400">💨 {{ hour.windSpeed10m }}{{ windSpeedUnit }} </span>
         </Card>
       </section>
     </Card>
