@@ -19,6 +19,7 @@ export interface HourlyForecastInterface {
 
 export interface HourlyUnitsForecastInterface {
   temperature2m: string;
+  windSpeedUnit: string;
 }
 
 export interface HourlyForecastDisplayInterface {

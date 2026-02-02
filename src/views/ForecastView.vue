@@ -73,6 +73,9 @@ export default {
     const temperatureUnit = computed<string>(() => {
       return forecast.value?.hourlyUnits.temperature2m || '';
     });
+    const windSpeedUnit = computed<string>(() => {
+      return forecast.value?.hourlyUnits.windSpeedUnit || '';
+    });
 
     // METHODS
     async function searchForecast() {
@@ -93,6 +96,7 @@ export default {
       v$,
       searchForm,
       temperatureUnit,
+      windSpeedUnit,
       todayHourlyForecast,
       forecast,
       searchForecast,
@@ -156,7 +160,7 @@ export default {
           <span class="text-xs text-gray-400"> {{ hour.weatherCode }}</span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
           <span class="text-sm font-semibold"> {{ hour.temperature }}{{ temperatureUnit }} </span>
-          <span class="text-xs text-gray-400"> {{ hour.windSpeed10m }} </span>
+          <span class="text-xs text-gray-400"> {{ hour.windSpeed10m }}{{ windSpeedUnit }} </span>
         </Card>
       </section>
     </Card>
