@@ -129,7 +129,6 @@ export default {
 <template>
   <article class="min-h-screen flex flex-col gap-6">
     <Title content="Voir les prévisions" subTitle="Recherchez une ville ou des coordonnées" />
-    lat: 47.316667 long: 5.016667
     <section>
       <form @submit.prevent="searchForecast" class="flex flex-col gap-4 w-full">
         <FormRow :cols="2">

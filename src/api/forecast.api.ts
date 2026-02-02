@@ -8,7 +8,6 @@ export abstract class ForecastApi {
   static async getForecast(filter: ForecastFilterInterface): Promise<ForecastInterface> {
     try {
       const { data } = await useApi().get(`/forecast`, { params: filter });
-      console.log(data);
       return data;
     } catch (e: unknown) {
       throw e;
