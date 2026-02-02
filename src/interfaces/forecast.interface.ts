@@ -3,18 +3,23 @@ export interface ForecastInterface {
   longitude: number;
   elevation: number;
   generationtime_ms: number;
-  utc_offset_seconds: number;
+  utcOffsetSeconds: number;
   timezone: string;
-  timezone_abbreviation: string; // TODO: enum?
+  timezoneAbbreviation: string; // TODO: enum?
   hourly: HourlyForecastInterface;
-  hourly_units: HourlyUnitsForecastInterface;
+  hourlyUnits: HourlyUnitsForecastInterface;
 }
 
 export interface HourlyForecastInterface {
   time: string[];
-  temperature_2m: number[];
+  temperature2m: number[];
 }
 
 export interface HourlyUnitsForecastInterface {
-  temperature_2m: string;
+  temperature2m: string;
+}
+
+export interface HourlyForecastDisplayInterface {
+  time: string;
+  temperature: number;
 }

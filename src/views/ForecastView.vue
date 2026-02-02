@@ -2,16 +2,20 @@
 import ButtonSubmit from '@/components/inputs/ButtonSubmit.vue';
 import InputNumber from '@/components/inputs/InputNumber.vue';
 import InputText from '@/components/inputs/InputText.vue';
+import Card from '@/components/shared/Card.vue';
 import FormRow from '@/components/shared/FormRow.vue';
 import Row from '@/components/shared/Row.vue';
 import Title from '@/components/shared/Title.vue';
 import type { ForecastFilterInterface } from '@/interfaces/filter.interface';
-import type { ForecastInterface } from '@/interfaces/forecast.interface';
+import type {
+  ForecastInterface,
+  HourlyForecastDisplayInterface,
+} from '@/interfaces/forecast.interface';
 import { ForecastService } from '@/services/forecast.service';
 import { withMessage } from '@/utils/helpers/withMessage';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
 export default {
@@ -36,6 +40,34 @@ export default {
     };
     const v$ = useVuelidate(searchRules, searchForm);
 
+    // COMPUTED
+    //TODO: refacto
+    const todayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
+      if (!forecast.value) return [];
+
+      const today = new Date().toISOString().split('T')[0];
+
+      return forecast.value.hourly.time
+        .map((time, index) => {
+          const temperature = forecast.value!.hourly.temperature2m[index];
+
+          if (temperature === undefined) return null;
+
+          return {
+            time,
+            temperature,
+          };
+        })
+        .filter(
+          (item): item is HourlyForecastDisplayInterface =>
+            item !== null && item.time.startsWith(today!),
+        );
+    });
+    const temperatureUnit = computed<string>(() => {
+      return forecast.value?.hourlyUnits.temperature2m || '';
+    });
+
+    // METHODS
     async function searchForecast() {
       const isValid = await v$.value.$validate();
       if (!isValid) return;
@@ -53,6 +85,8 @@ export default {
     return {
       v$,
       searchForm,
+      temperatureUnit,
+      todayHourlyForecast,
       forecast,
       searchForecast,
     };
@@ -64,6 +98,7 @@ export default {
     ButtonSubmit,
     FormRow,
     Row,
+    Card,
   },
 };
 </script>
@@ -103,5 +138,18 @@ export default {
         </Row>
       </form>
     </section>
+
+    <Card>
+      <section v-if="todayHourlyForecast.length" class="flex gap-4 overflow-x-auto py-2">
+        <Card
+          v-for="(hour, index) in todayHourlyForecast"
+          :key="index"
+          class="min-w-[70px] h-[64px] p-1 flex flex-col items-center justify-center gap-1"
+        >
+          <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
+          <span class="text-sm font-semibold"> {{ hour.temperature }}{{ temperatureUnit }} </span>
+        </Card>
+      </section>
+    </Card>
   </article>
 </template>
