@@ -43,6 +43,7 @@ export default {
 
         <div v-if="isLoggedIn" class="hidden md:flex items-center gap-6">
           <NavLink to="/forecast">Prévisions</NavLink>
+          <NavLink to="/history">Historique</NavLink>
         </div>
       </div>
     </template>
