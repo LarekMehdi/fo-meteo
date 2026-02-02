@@ -6,6 +6,11 @@ export function useApi() {
     baseURL: import.meta.env.VITE_API_BASE_URL,
   });
 
+  // Instance dédiée au refresh (sans interceptors)
+  const refreshApi: AxiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL,
+  });
+
   function isPublicRoute(url?: string) {
     return url?.includes('auth/signup') || url?.includes('auth/signin');
   }
@@ -15,10 +20,6 @@ export function useApi() {
 
     if (authStore.accessToken) {
       config.headers.Authorization = `Bearer ${authStore.accessToken}`;
-    }
-
-    if (config.url?.includes('auth/refresh')) {
-      config.headers['X-Refresh-Token'] = authStore.refreshToken;
     }
 
     return config;
@@ -31,14 +32,21 @@ export function useApi() {
       const authStore = useAuthStore();
 
       if (error.response?.status === 401 && !isPublicRoute(originalRequest.url)) {
-        if (originalRequest.url?.includes('auth/refresh') || !authStore.refreshToken) {
+        if (originalRequest._retry || !authStore.refreshToken) {
           authStore.clearAuth();
           location.href = '/signin';
           return Promise.reject(error);
         }
 
+        originalRequest._retry = true;
+
         try {
-          const res = await api.get('auth/refresh');
+          const res = await refreshApi.get('auth/refresh', {
+            headers: {
+              'X-Refresh-Token': authStore.refreshToken,
+            },
+          });
+
           authStore.setAuthState(res.data);
           originalRequest.headers.Authorization = `Bearer ${res.data.accessToken}`;
           return api(originalRequest);
@@ -49,7 +57,7 @@ export function useApi() {
         }
       }
 
-      if (error.response?.status === 403 && !isPublicRoute(originalRequest.url)) {
+      if (error.response?.status === 403) {
         //TODO: location.href = '/error/403';
         location.href = '/';
       }
