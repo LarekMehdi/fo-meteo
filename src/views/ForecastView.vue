@@ -1,5 +1,6 @@
 <script lang="ts">
 import ButtonSubmit from '@/components/inputs/ButtonSubmit.vue';
+import CityAutocomplete from '@/components/inputs/CityAutocomplete.vue';
 import InputNumber from '@/components/inputs/InputNumber.vue';
 import InputText from '@/components/inputs/InputText.vue';
 import Card from '@/components/shared/Card.vue';
@@ -7,6 +8,7 @@ import FormRow from '@/components/shared/FormRow.vue';
 import Row from '@/components/shared/Row.vue';
 import Title from '@/components/shared/Title.vue';
 import { getWeatherIcon } from '@/constants/weatherCode.constant';
+import type { City } from '@/interfaces/city.interface';
 import type { ForecastFilterInterface } from '@/interfaces/filter.interface';
 import type {
   ForecastInterface,
@@ -93,6 +95,12 @@ export default {
         isLoading.value = false;
       }
     }
+
+    function handleCitySelect(city: City) {
+      searchForm.latitude = city.latitude;
+      searchForm.longitude = city.longitude;
+      searchForm.cityName = city.name;
+    }
     return {
       v$,
       searchForm,
@@ -102,12 +110,14 @@ export default {
       forecast,
       getWeatherIcon,
       searchForecast,
+      handleCitySelect,
     };
   },
   components: {
     Title,
     InputText,
     InputNumber,
+    CityAutocomplete,
     ButtonSubmit,
     FormRow,
     Row,
@@ -122,6 +132,9 @@ export default {
     lat: 47.316667 long: 5.016667
     <section>
       <form @submit.prevent="searchForecast" class="flex flex-col gap-4 w-full">
+        <FormRow :cols="2">
+          <CityAutocomplete @update:modelValue="handleCitySelect" />
+        </FormRow>
         <FormRow :cols="2">
           <InputNumber
             v-model="searchForm.latitude"
