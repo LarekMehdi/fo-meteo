@@ -36,6 +36,7 @@ export default {
     const query = ref('');
     const results = ref<any[]>([]);
     const displayDropbox = ref(false);
+    const skipNextFetch = ref(false);
 
     // query TanStack
     const queryResult = useQuery({
@@ -49,6 +50,11 @@ export default {
     });
 
     const debouncedFetch = useDebounceFn(async () => {
+      if (skipNextFetch.value) {
+        skipNextFetch.value = false;
+        return;
+      }
+
       const q = (query.value ?? '').toString();
       if (q.trim().length < 2) {
         results.value = [];
@@ -64,6 +70,7 @@ export default {
     watch(query, debouncedFetch);
 
     function handleSelect(item: any) {
+      skipNextFetch.value = true;
       query.value = props.getResultLabel(item);
       displayDropbox.value = false;
       emit('select', item);
