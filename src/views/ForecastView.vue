@@ -29,6 +29,9 @@ export default {
     const searchForm = reactive<ForecastFilterInterface>({
       latitude: null,
       longitude: null,
+      hourly: true,
+      weatherCode: true,
+      windSpeed10m: true,
     });
     const searchRules = {
       latitude: {
@@ -50,12 +53,16 @@ export default {
       return forecast.value.hourly.time
         .map((time, index) => {
           const temperature = forecast.value!.hourly.temperature2m[index];
+          const weatherCode = forecast.value!.hourly.weatherCode[index];
+          const windSpeed10m = forecast.value!.hourly.windSpeed10m[index];
 
           if (temperature === undefined) return null;
 
           return {
             time,
             temperature,
+            weatherCode,
+            windSpeed10m,
           };
         })
         .filter(
@@ -106,7 +113,7 @@ export default {
 <template>
   <article class="min-h-screen flex flex-col gap-6">
     <Title content="Voir les prévisions" subTitle="Recherchez une ville ou des coordonnées" />
-
+    lat: 47.316667 long: 5.016667
     <section>
       <form @submit.prevent="searchForecast" class="flex flex-col gap-4 w-full">
         <FormRow :cols="2">
@@ -146,8 +153,10 @@ export default {
           :key="index"
           class="min-w-[70px] h-[64px] p-1 flex flex-col items-center justify-center gap-1"
         >
+          <span class="text-xs text-gray-400"> {{ hour.weatherCode }}</span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
           <span class="text-sm font-semibold"> {{ hour.temperature }}{{ temperatureUnit }} </span>
+          <span class="text-xs text-gray-400"> {{ hour.windSpeed10m }} </span>
         </Card>
       </section>
     </Card>

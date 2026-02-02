@@ -13,6 +13,8 @@ export interface ForecastInterface {
 export interface HourlyForecastInterface {
   time: string[];
   temperature2m: number[];
+  weatherCode: number[];
+  windSpeed10m: number[];
 }
 
 export interface HourlyUnitsForecastInterface {
@@ -22,4 +24,6 @@ export interface HourlyUnitsForecastInterface {
 export interface HourlyForecastDisplayInterface {
   time: string;
   temperature: number;
+  weatherCode: number;
+  windSpeed10m: number;
 }
