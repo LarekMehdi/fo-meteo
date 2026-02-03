@@ -16,6 +16,13 @@ import 'vue-toastification/dist/index.css';
 /** TANSTACK QUERY **/
 import { VueQueryPlugin, QueryClient } from '@tanstack/vue-query';
 
+/** PRIME VUE **/
+import 'primeicons/primeicons.css';
+import PrimeVue from 'primevue/config';
+
+/** THEME **/
+import Aura from '@primeuix/themes/aura';
+
 const options: PluginOptions = {
   position: POSITION.TOP_CENTER,
 };
@@ -29,5 +36,10 @@ app.use(pinia);
 app.use(Toast, options);
 app.use(router);
 app.use(VueQueryPlugin, { queryClient });
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+  },
+});
 
 app.mount('#app');

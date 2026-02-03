@@ -12,6 +12,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@primeuix/themes": "^2.0.3",
     "@tanstack/vue-query": "^5.92.9",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
@@ -19,6 +20,8 @@
     "axios": "^1.13.4",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.4",
     "qs": "^6.14.1",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4",
