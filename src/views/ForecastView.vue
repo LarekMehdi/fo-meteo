@@ -15,6 +15,7 @@ import type {
   HourlyForecastDisplayInterface,
 } from '@/interfaces/forecast.interface';
 import { ForecastService } from '@/services/forecast.service';
+import { SearchForecastHistoryService } from '@/services/searchForecastHistory.service';
 import { withMessage } from '@/utils/helpers/withMessage';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
@@ -95,6 +96,16 @@ export default {
         isLoading.value = false;
       }
     }
+    async function saveCurrentSearch() {
+      if (!forecast) return;
+
+      try {
+        await SearchForecastHistoryService.create(searchForm);
+        toast.success('Recherche sauvegardée!');
+      } catch (_e: unknown) {
+        toast.error('Impossible de sauvegarder la recherche.');
+      }
+    }
 
     function handleCitySelect(city: City) {
       searchForm.latitude = city.latitude;
@@ -111,6 +122,7 @@ export default {
       getWeatherIcon,
       searchForecast,
       handleCitySelect,
+      saveCurrentSearch,
     };
   },
   components: {
@@ -159,6 +171,13 @@ export default {
         <Row>
           <template #left>
             <ButtonSubmit content="Rechercher" />
+            <ButtonSubmit
+              v-if="forecast"
+              content="Sauvegarder la recherche"
+              buttonColor="bg-green-600"
+              buttonColorHover="hover:bg-green-700"
+              @click="saveCurrentSearch"
+            />
           </template>
         </Row>
       </form>
