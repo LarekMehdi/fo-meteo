@@ -7,26 +7,27 @@ import { SearchForecastHistoryService } from '@/services/searchForecastHistory.s
 import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import { reactive, ref, computed } from 'vue';
+import { reactive, computed } from 'vue';
 
 export default {
   setup() {
     const filter = reactive<HistoryFilterInterface>({
-      limit: 10,
+      limit: 5,
       page: 1,
     });
+    const queryKey = computed(() => ['all-histories', filter.page, filter.limit]);
 
     const historiesQuery: UseQueryReturnType<
       PageInterface<SearchHistoryInterface>,
       Error
     > = useQuery({
-      queryKey: ['all-histories', filter.page, filter.limit],
+      queryKey,
       queryFn: () => SearchForecastHistoryService.getHistories(filter),
       staleTime: 1000 * 60 * 5,
     });
 
     const histories = computed(() => historiesQuery.data.value?.datas || []);
-    const totalRecords = computed(() => historiesQuery.data.value?.totalElement || 0);
+    const totalRecords = computed(() => historiesQuery.data.value?.totalElements || 0);
     const isLoading = computed(() => historiesQuery.isLoading.value);
 
     function replaySearch(item: SearchHistoryInterface) {
@@ -68,6 +69,7 @@ export default {
         :paginator="true"
         :rows="filter.limit"
         :totalRecords="totalRecords"
+        :first="(filter.page - 1) * filter.limit"
         :lazy="true"
         @page="onPage"
       >

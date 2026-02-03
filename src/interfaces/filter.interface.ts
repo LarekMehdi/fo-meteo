@@ -1,6 +1,6 @@
 export interface PageInterface<T> {
   datas: T[];
-  totalElement: number;
+  totalElements: number;
 }
 
 export interface GenericFilterInterface {
