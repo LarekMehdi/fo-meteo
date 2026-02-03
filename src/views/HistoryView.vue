@@ -5,6 +5,7 @@ import Title from '@/components/shared/Title.vue';
 import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.interface';
 import type { SearchHistoryInterface } from '@/interfaces/searchHistory.interface';
 import { SearchForecastHistoryService } from '@/services/searchForecastHistory.service';
+import { useAuthStore } from '@/stores/auth.store';
 import { useQuery, useQueryClient, type UseQueryReturnType } from '@tanstack/vue-query';
 import { AxiosError } from 'axios';
 import Column from 'primevue/column';
@@ -17,6 +18,7 @@ export default {
   setup() {
     const router = useRouter();
     const toast = useToast();
+    const authStore = useAuthStore();
     const queryClient = useQueryClient();
     const displayConfirmDeleteModal = ref(false);
     let historyIdToDelete: number | null = null;
@@ -24,7 +26,12 @@ export default {
       limit: 5,
       page: 1,
     });
-    const queryKey = computed(() => ['all-histories', filter.page, filter.limit]);
+    const queryKey = computed(() => [
+      'all-histories',
+      filter.page,
+      filter.limit,
+      authStore.user?.id,
+    ]);
 
     const historiesQuery: UseQueryReturnType<
       PageInterface<SearchHistoryInterface>,
