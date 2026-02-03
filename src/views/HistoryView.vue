@@ -1,16 +1,58 @@
 <script lang="ts">
+import ButtonCustom from '@/components/inputs/ButtonCustom.vue';
 import Title from '@/components/shared/Title.vue';
+import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.interface';
+import type { SearchHistoryInterface } from '@/interfaces/searchHistory.interface';
+import { SearchForecastHistoryService } from '@/services/searchForecastHistory.service';
+import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
+import { reactive, ref, computed } from 'vue';
 
 export default {
   setup() {
-    return {};
+    const filter = reactive<HistoryFilterInterface>({
+      limit: 10,
+      page: 1,
+    });
+
+    const historiesQuery: UseQueryReturnType<
+      PageInterface<SearchHistoryInterface>,
+      Error
+    > = useQuery({
+      queryKey: ['all-histories', filter.page, filter.limit],
+      queryFn: () => SearchForecastHistoryService.getHistories(filter),
+      staleTime: 1000 * 60 * 5,
+    });
+
+    const histories = computed(() => historiesQuery.data.value?.datas || []);
+    const totalRecords = computed(() => historiesQuery.data.value?.totalElement || 0);
+    const isLoading = computed(() => historiesQuery.isLoading.value);
+
+    function replaySearch(item: SearchHistoryInterface) {
+      console.log(item);
+    }
+
+    function onPage(event: { page: number; rows: number }) {
+      filter.page = event.page + 1;
+      filter.limit = event.rows;
+    }
+
+    return {
+      filter,
+      historiesQuery,
+      histories,
+      totalRecords,
+      isLoading,
+      onPage,
+      replaySearch,
+    };
   },
   components: {
     Title,
     DataTable,
     Column,
+    ButtonCustom,
   },
 };
 </script>
@@ -21,13 +63,13 @@ export default {
 
     <article class="overflow-x-auto">
       <DataTable
-        class="table-class"
-        :value="[]"
-        tableStyle="min-width: 50rem"
-        :loading="false"
-        :scrollable="true"
-        scrollHeight="500px"
-        style="width: 100%"
+        :value="histories"
+        :loading="isLoading"
+        :paginator="true"
+        :rows="filter.limit"
+        :totalRecords="totalRecords"
+        :lazy="true"
+        @page="onPage"
       >
         <template #empty>
           <div class="text-center py-8 text-gray-500">Aucunes recherches sauvegardées</div>
@@ -42,7 +84,7 @@ export default {
         <Column field="createdAt" header="Date" sortable style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
-              <p>{{ slotProps.data.createdAt }}</p>
+              <p>{{ new Date(slotProps.data.createdAt).toLocaleDateString('fr-FR') }}</p>
             </section>
           </template>
         </Column>
@@ -59,7 +101,7 @@ export default {
         <Column header="Action" style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
-              <p>sup</p>
+              <ButtonCustom @click="() => replaySearch(slotProps.data)" content="Relancer" />
             </section>
           </template>
         </Column>
