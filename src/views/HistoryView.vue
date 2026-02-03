@@ -34,6 +34,10 @@ export default {
       console.log(item);
     }
 
+    function deleteHistory(itemId: number) {
+      console.log(itemId);
+    }
+
     function onPage(event: { page: number; rows: number }) {
       filter.page = event.page + 1;
       filter.limit = event.rows;
@@ -47,6 +51,7 @@ export default {
       isLoading,
       onPage,
       replaySearch,
+      deleteHistory,
     };
   },
   components: {
@@ -83,27 +88,39 @@ export default {
           </div>
         </template>
 
-        <Column field="createdAt" header="Date" sortable style="width: 10%">
+        <Column field="createdAt" header="Date" style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
               <p>{{ new Date(slotProps.data.createdAt).toLocaleDateString('fr-FR') }}</p>
             </section>
           </template>
         </Column>
-        <Column field="latitude" header="Latitude" sortable style="width: 10%"></Column>
-        <Column field="longitude" header="Longitude" sortable style="width: 10%"></Column>
-        <Column field="windSpeed10m" header="Vitesse du vent" sortable style="width: 10%">
+        <Column field="latitude" header="Latitude" style="width: 10%"></Column>
+        <Column field="longitude" header="Longitude" style="width: 10%"></Column>
+        <Column field="windSpeed10m" header="Vitesse du vent" style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
               <p>{{ slotProps.data.windSpeed10m }}</p>
             </section>
           </template>
         </Column>
-        <Column field="windSpeedUnit" header="Unité du vent" sortable style="width: 10%"></Column>
-        <Column header="Action" style="width: 10%">
+        <Column field="windSpeedUnit" header="Unité du vent" style="width: 10%"></Column>
+        <Column headerStyle="text-align: center" bodyStyle="text-align: center" style="width: 10%">
+          <template #header>
+            <div class="w-full text-center">Action</div>
+          </template>
           <template #body="slotProps">
-            <section class="flex items-center gap-8">
-              <ButtonCustom @click="() => replaySearch(slotProps.data)" content="Relancer" />
+            <section class="flex justify-center items-center gap-2">
+              <i
+                @click="replaySearch(slotProps.data)"
+                class="pi pi-pen-to-square cursor-pointer text-blue-600 hover:text-blue-800"
+                title="Relancer"
+              ></i>
+              <i
+                @click="deleteHistory(slotProps.data.id)"
+                class="pi pi-trash cursor-pointer text-red-600 hover:text-red-800"
+                title="Supprimer"
+              ></i>
             </section>
           </template>
         </Column>
