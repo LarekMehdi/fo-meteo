@@ -19,12 +19,14 @@ import { SearchForecastHistoryService } from '@/services/searchForecastHistory.s
 import { withMessage } from '@/utils/helpers/withMessage';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
+import { useRoute } from 'vue-router';
 
 export default {
   setup() {
     const toast = useToast();
+    const route = useRoute();
 
     const forecast = ref<ForecastInterface | null>(null);
     const isLoading = ref(false);
@@ -112,6 +114,20 @@ export default {
       searchForm.longitude = city.longitude;
       searchForm.cityName = city.name;
     }
+
+    onMounted(() => {
+      if (route.query.latitude && route.query.longitude) {
+        searchForm.latitude = Number(route.query.latitude);
+        searchForm.longitude = Number(route.query.longitude);
+
+        if (route.query.windSpeed10m) {
+          searchForm.windSpeed10m = route.query.windSpeed10m === 'true';
+        }
+
+        searchForecast();
+      }
+    });
+
     return {
       v$,
       searchForm,

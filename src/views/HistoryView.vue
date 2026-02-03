@@ -8,9 +8,11 @@ import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { reactive, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
+    const router = useRouter();
     const filter = reactive<HistoryFilterInterface>({
       limit: 5,
       page: 1,
@@ -31,7 +33,14 @@ export default {
     const isLoading = computed(() => historiesQuery.isLoading.value);
 
     function replaySearch(item: SearchHistoryInterface) {
-      console.log(item);
+      router.push({
+        name: 'forecast',
+        query: {
+          latitude: item.latitude.toString(),
+          longitude: item.longitude.toString(),
+          windSpeed10m: item.windSpeed10m.toString(),
+        },
+      });
     }
 
     function deleteHistory(itemId: number) {
