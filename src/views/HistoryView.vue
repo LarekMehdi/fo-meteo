@@ -1,5 +1,6 @@
 <script lang="ts">
 import ButtonCustom from '@/components/inputs/ButtonCustom.vue';
+import ModalConfirm from '@/components/shared/ModalConfirm.vue';
 import Title from '@/components/shared/Title.vue';
 import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.interface';
 import type { SearchHistoryInterface } from '@/interfaces/searchHistory.interface';
@@ -7,12 +8,14 @@ import { SearchForecastHistoryService } from '@/services/searchForecastHistory.s
 import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import { reactive, computed } from 'vue';
+import { reactive, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
   setup() {
     const router = useRouter();
+    const displayConfirmDeleteModal = ref(false);
+    let historyIdToDelete: number | null = null;
     const filter = reactive<HistoryFilterInterface>({
       limit: 5,
       page: 1,
@@ -43,6 +46,11 @@ export default {
       });
     }
 
+    function alternDisplayConfirmDeleteModal(id: number | null) {
+      displayConfirmDeleteModal.value = !displayConfirmDeleteModal.value;
+      historyIdToDelete = id;
+    }
+
     function deleteHistory(itemId: number) {
       console.log(itemId);
     }
@@ -58,9 +66,11 @@ export default {
       histories,
       totalRecords,
       isLoading,
+      displayConfirmDeleteModal,
       onPage,
       replaySearch,
       deleteHistory,
+      alternDisplayConfirmDeleteModal,
     };
   },
   components: {
@@ -68,6 +78,7 @@ export default {
     DataTable,
     Column,
     ButtonCustom,
+    ModalConfirm,
   },
 };
 </script>
@@ -76,7 +87,7 @@ export default {
   <article class="min-h-screen flex flex-col gap-6">
     <Title content="Historique" subTitle="Relancez ou supprimez vos recherches sauvegardées" />
 
-    <article class="overflow-x-auto">
+    <section class="overflow-x-auto">
       <DataTable
         :value="histories"
         :loading="isLoading"
@@ -126,7 +137,7 @@ export default {
                 title="Relancer"
               ></i>
               <i
-                @click="deleteHistory(slotProps.data.id)"
+                @click="alternDisplayConfirmDeleteModal(slotProps.data.id)"
                 class="pi pi-trash cursor-pointer text-red-600 hover:text-red-800"
                 title="Supprimer"
               ></i>
@@ -134,6 +145,19 @@ export default {
           </template>
         </Column>
       </DataTable>
-    </article>
+    </section>
+
+    <!-- DELETE -->
+    <ModalConfirm
+      :visible="displayConfirmDeleteModal"
+      @close="alternDisplayConfirmDeleteModal"
+      @submit="deleteHistory"
+      title="Supprimer cette recherche"
+      submitLabel="Supprimer"
+    >
+      <template #content>
+        <p>Etes vous sur de vouloir supprimer cette recherche ?</p>
+      </template>
+    </ModalConfirm>
   </article>
 </template>
