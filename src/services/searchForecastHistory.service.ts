@@ -18,4 +18,9 @@ export abstract class SearchForecastHistoryService {
   ): Promise<PageInterface<SearchHistoryInterface>> {
     return await SearchForecastHistoryApi.getHistories(filter);
   }
+
+  /** DELETE **/
+  static async delete(id: number) {
+    return await SearchForecastHistoryApi.delete(id);
+  }
 }

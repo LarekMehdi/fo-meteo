@@ -24,4 +24,14 @@ export abstract class SearchForecastHistoryApi {
       throw e;
     }
   }
+
+  /** DELETE **/
+  static async delete(id: number) {
+    try {
+      const { data } = await useApi().delete(`/history/${id}`);
+      return data;
+    } catch (e: unknown) {
+      throw e;
+    }
+  }
 }

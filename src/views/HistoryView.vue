@@ -5,15 +5,19 @@ import Title from '@/components/shared/Title.vue';
 import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.interface';
 import type { SearchHistoryInterface } from '@/interfaces/searchHistory.interface';
 import { SearchForecastHistoryService } from '@/services/searchForecastHistory.service';
-import { useQuery, type UseQueryReturnType } from '@tanstack/vue-query';
+import { useQuery, useQueryClient, type UseQueryReturnType } from '@tanstack/vue-query';
+import { AxiosError } from 'axios';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import { reactive, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 export default {
   setup() {
     const router = useRouter();
+    const toast = useToast();
+    const queryClient = useQueryClient();
     const displayConfirmDeleteModal = ref(false);
     let historyIdToDelete: number | null = null;
     const filter = reactive<HistoryFilterInterface>({
@@ -51,8 +55,31 @@ export default {
       historyIdToDelete = id;
     }
 
-    function deleteHistory(itemId: number) {
-      console.log(itemId);
+    async function deleteHistory() {
+      if (!historyIdToDelete) {
+        toast.error('Pas de dropzone a supprimer');
+        return;
+      }
+
+      try {
+        await SearchForecastHistoryService.delete(historyIdToDelete);
+        alternDisplayConfirmDeleteModal(null);
+        toast.success('Recherche supprimée');
+        queryClient.invalidateQueries({ queryKey: ['all-histories'] });
+        historiesQuery.refetch();
+      } catch (e: unknown) {
+        if (e instanceof AxiosError && e.response) {
+          switch (e.response.status) {
+            case 404:
+              toast.error("Cette recherche n'existe pas");
+              break;
+            default:
+              toast.error('Erreur serveur');
+          }
+        } else {
+          toast.error('Une erreur est survenue');
+        }
+      }
     }
 
     function onPage(event: { page: number; rows: number }) {
