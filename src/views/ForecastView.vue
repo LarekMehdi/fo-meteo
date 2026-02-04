@@ -90,7 +90,6 @@ export default {
 
       try {
         isLoading.value = true;
-        console.log(searchForm);
         forecast.value = await ForecastService.getForecast(searchForm);
       } catch (e: unknown) {
         toast.error('Une erreur est survenue');
