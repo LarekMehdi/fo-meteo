@@ -61,7 +61,11 @@ export default {
       {{ label }}
     </label>
 
-    <label :for="name" class="relative inline-block w-12 h-7 cursor-pointer">
+    <label
+      :for="name"
+      class="relative inline-block w-12 h-7"
+      :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'"
+    >
       <input
         :id="name"
         type="checkbox"
@@ -75,7 +79,7 @@ export default {
         :class="[
           'absolute inset-0 rounded-full transition-colors duration-300',
           sliderBg,
-          disabled ? 'opacity-50 cursor-not-allowed' : '',
+          disabled ? 'opacity-50' : '',
         ]"
       ></div>
       <div
