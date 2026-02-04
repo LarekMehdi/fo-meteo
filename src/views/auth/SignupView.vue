@@ -83,11 +83,17 @@ export default {
       }
     }
 
+    // NAV
+    function goToSignin() {
+      router.push('/signin');
+    }
+
     return {
       v$,
       toast,
       signupForm,
       signup,
+      goToSignin,
     };
   },
   components: {
@@ -170,5 +176,11 @@ export default {
         </Row>
       </aside>
     </Card>
+    <section class="pl-1 w-1/2 mx-auto">
+      <small>
+        Déjà un compte? Connectez vous
+        <a @click="goToSignin" class="cursor-pointer text-blue-500">ici</a>
+      </small>
+    </section>
   </article>
 </template>
