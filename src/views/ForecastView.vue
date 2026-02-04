@@ -29,6 +29,7 @@ import { getWindSpeedUnitOptions, WindSpeedUnit } from '@/constants/windSpeedUni
 import InputSelect from '@/components/inputs/InputSelect.vue';
 import { UtilDate } from '@/utils/date.utils';
 import { UtilForecast } from '@/utils/forecast.utils';
+import { AxiosError } from 'axios';
 
 export default {
   setup() {
@@ -96,8 +97,18 @@ export default {
         await SearchForecastHistoryService.create(searchForm);
         toast.success('Recherche sauvegardée!');
         queryClient.invalidateQueries({ queryKey: ['all-histories'] });
-      } catch (_e: unknown) {
-        toast.error('Impossible de sauvegarder la recherche.');
+      } catch (e: unknown) {
+        if (e instanceof AxiosError && e.response) {
+          switch (e.response.status) {
+            case 412:
+              toast.warning('Cette recherche est déjà sauvegardée');
+              break;
+            default:
+              toast.error('Erreur serveur');
+          }
+        } else {
+          toast.error('Impossible de sauvegarder la recherche.');
+        }
       }
     }
 
