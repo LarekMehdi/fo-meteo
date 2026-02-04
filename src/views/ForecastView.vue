@@ -11,6 +11,7 @@ import { getWeatherIcon } from '@/constants/weatherCode.constant';
 import type { City } from '@/interfaces/city.interface';
 import type { ForecastFilterInterface } from '@/interfaces/filter.interface';
 import type {
+  DailyForecastInterface,
   ForecastInterface,
   HourlyForecastDisplayInterface,
 } from '@/interfaces/forecast.interface';
@@ -26,6 +27,8 @@ import { useQueryClient } from '@tanstack/vue-query';
 import InputSwitch from '@/components/inputs/InputSwitch.vue';
 import { getWindSpeedUnitOptions, WindSpeedUnit } from '@/constants/windSpeedUnit.constant';
 import InputSelect from '@/components/inputs/InputSelect.vue';
+import { UtilDate } from '@/utils/date.utils';
+import { UtilForecast } from '@/utils/forecast.utils';
 
 export default {
   setup() {
@@ -35,6 +38,7 @@ export default {
 
     const forecast = ref<ForecastInterface | null>(null);
     const isLoading = ref(false);
+    const displayWeekResults = ref(false);
 
     // FORM
     const searchForm = reactive<ForecastFilterInterface>({
@@ -56,31 +60,13 @@ export default {
     const v$ = useVuelidate(searchRules, searchForm);
 
     // COMPUTED
-    //TODO: refacto
     const todayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
       if (!forecast.value) return [];
-
-      const today = new Date().toISOString().split('T')[0];
-
-      return forecast.value.hourly.time
-        .map((time, index) => {
-          const temperature = forecast.value!.hourly.temperature2m[index];
-          const weatherCode = forecast.value!.hourly.weatherCode[index];
-          const windSpeed10m = forecast.value!.hourly.windSpeed10m[index];
-
-          if (temperature === undefined) return null;
-
-          return {
-            time,
-            temperature,
-            weatherCode,
-            windSpeed10m,
-          };
-        })
-        .filter(
-          (item): item is HourlyForecastDisplayInterface =>
-            item !== null && item.time.startsWith(today!),
-        );
+      return UtilForecast.getTodayHourlyForecast(forecast.value);
+    });
+    const weeklyForecast = computed<DailyForecastInterface[]>(() => {
+      if (!forecast.value) return [];
+      return UtilForecast.getWeeklyForecast(forecast.value);
     });
     const temperatureUnit = computed<string>(() => {
       return forecast.value?.hourlyUnits.temperature2m || '';
@@ -120,6 +106,9 @@ export default {
       searchForm.longitude = city.longitude;
       searchForm.cityName = city.name;
     }
+    function alternDisplayWeekResults() {
+      displayWeekResults.value = !displayWeekResults.value;
+    }
 
     onMounted(() => {
       if (route.query.latitude && route.query.longitude) {
@@ -141,11 +130,15 @@ export default {
       windSpeedUnit,
       todayHourlyForecast,
       forecast,
+      displayWeekResults,
+      weeklyForecast,
       getWeatherIcon,
       searchForecast,
       handleCitySelect,
       saveCurrentSearch,
       getWindSpeedUnitOptions,
+      alternDisplayWeekResults,
+      UtilDate,
     };
   },
   components: {
@@ -249,5 +242,51 @@ export default {
         </Card>
       </section>
     </Card>
+
+    <section v-if="todayHourlyForecast.length">
+      <Row>
+        <template #left>
+          <p>
+            Semaine prochaine
+            <i
+              @click="alternDisplayWeekResults()"
+              :class="[
+                'pi',
+                displayWeekResults ? 'pi-chevron-down' : 'pi-chevron-right',
+                'cursor-pointer',
+                'text-blue-600',
+                'hover:text-blue-800',
+              ]"
+              :title="displayWeekResults ? 'Fermer' : 'Ouvrir'"
+            ></i>
+          </p>
+        </template>
+      </Row>
+      <Card v-if="displayWeekResults && weeklyForecast.length" class="mt-2">
+        <section class="flex justify-center gap-4 overflow-x-auto py-2">
+          <Card
+            v-for="(day, index) in weeklyForecast"
+            :key="index"
+            class="min-w-[120px] p-3 flex flex-col items-center gap-2"
+          >
+            <span class="text-sm font-medium text-gray-600 capitalize">
+              {{ UtilDate.formatToFrFullName(day.date) }}
+            </span>
+            <span class="text-3xl">
+              {{ getWeatherIcon(day.weatherCode) }}
+            </span>
+            <div class="flex gap-2 text-sm">
+              <span class="font-semibold text-red-500">
+                {{ Math.round(day.maxTemp) }}{{ temperatureUnit }}
+              </span>
+              <span class="text-gray-400">/</span>
+              <span class="text-blue-500">
+                {{ Math.round(day.minTemp) }}{{ temperatureUnit }}
+              </span>
+            </div>
+          </Card>
+        </section>
+      </Card>
+    </section>
   </article>
 </template>

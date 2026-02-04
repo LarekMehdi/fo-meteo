@@ -28,3 +28,10 @@ export interface HourlyForecastDisplayInterface {
   weatherCode: number;
   windSpeed10m: number;
 }
+
+export interface DailyForecastInterface {
+  date: string;
+  minTemp: number;
+  maxTemp: number;
+  weatherCode: number;
+}
