@@ -1,5 +1,6 @@
 <script lang="ts">
 import ButtonCustom from '@/components/inputs/ButtonCustom.vue';
+import InputSwitch from '@/components/inputs/InputSwitch.vue';
 import ModalConfirm from '@/components/shared/ModalConfirm.vue';
 import Title from '@/components/shared/Title.vue';
 import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.interface';
@@ -115,6 +116,7 @@ export default {
     Column,
     ButtonCustom,
     ModalConfirm,
+    InputSwitch,
   },
 };
 </script>
@@ -156,7 +158,14 @@ export default {
         <Column field="windSpeed10m" header="Vitesse du vent" style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
-              <p>{{ slotProps.data.windSpeed10m }}</p>
+              <InputSwitch
+                v-model="slotProps.data.windSpeed10m"
+                name="windSpeed10m"
+                label=""
+                :disabled="true"
+                :displayLabel="false"
+                :inline="true"
+              />
             </section>
           </template>
         </Column>
