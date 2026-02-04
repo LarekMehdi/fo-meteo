@@ -167,7 +167,7 @@ export default {
             <section class="flex justify-center items-center gap-2">
               <i
                 @click="replaySearch(slotProps.data)"
-                class="pi pi-pen-to-square cursor-pointer text-blue-600 hover:text-blue-800"
+                class="pi pi-replay cursor-pointer text-blue-600 hover:text-blue-800"
                 title="Relancer"
               ></i>
               <i
