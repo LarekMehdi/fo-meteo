@@ -60,14 +60,14 @@ export default {
 
         <Row>
           <template #left>
-            <ButtonCustom content="Annuler" @click="close" />
-          </template>
-          <template #right>
             <ButtonSubmit
               :content="submitLabel"
               buttonColor="bg-red-500"
               buttonColorHover="hover:bg-red-700"
             />
+          </template>
+          <template #right>
+            <ButtonCustom content="Annuler" @click="close" />
           </template>
         </Row>
       </form>
