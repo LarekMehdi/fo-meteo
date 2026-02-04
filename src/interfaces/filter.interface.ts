@@ -1,3 +1,5 @@
+import type { WindSpeedUnit } from '@/constants/windSpeedUnit.constant';
+
 export interface PageInterface<T> {
   datas: T[];
   totalElements: number;
@@ -20,4 +22,5 @@ export interface ForecastFilterInterface {
   hourly?: boolean;
   weatherCode?: boolean;
   windSpeed10m: boolean;
+  windSpeedUnit: WindSpeedUnit;
 }

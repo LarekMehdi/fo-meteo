@@ -24,6 +24,8 @@ import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
 import { useQueryClient } from '@tanstack/vue-query';
 import InputSwitch from '@/components/inputs/InputSwitch.vue';
+import { getWindSpeedUnitOptions, WindSpeedUnit } from '@/constants/windSpeedUnit.constant';
+import InputSelect from '@/components/inputs/InputSelect.vue';
 
 export default {
   setup() {
@@ -41,6 +43,7 @@ export default {
       hourly: true,
       weatherCode: true,
       windSpeed10m: true,
+      windSpeedUnit: WindSpeedUnit.KMH,
     });
     const searchRules = {
       latitude: {
@@ -142,6 +145,7 @@ export default {
       searchForecast,
       handleCitySelect,
       saveCurrentSearch,
+      getWindSpeedUnitOptions,
     };
   },
   components: {
@@ -149,6 +153,7 @@ export default {
     InputText,
     InputNumber,
     InputSwitch,
+    InputSelect,
     CityAutocomplete,
     ButtonSubmit,
     FormRow,
@@ -188,13 +193,23 @@ export default {
             :validation="v$.longitude"
           />
         </FormRow>
-        <FormRow>
+        <FormRow :cols="2">
           <InputSwitch
             v-model="searchForm.windSpeed10m"
             name="windSpeed10m"
             label="Afficher la vitesse du vent"
             :displayLabel="true"
             :inline="true"
+          />
+          <InputSelect
+            v-if="searchForm.windSpeed10m"
+            v-model="searchForm.windSpeedUnit"
+            name="status"
+            label="Status"
+            placeholder="Status"
+            :inline="true"
+            :displayLabel="false"
+            :options="getWindSpeedUnitOptions()"
           />
         </FormRow>
 
