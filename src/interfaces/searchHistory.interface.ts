@@ -3,6 +3,7 @@ export interface SearchHistoryInterface {
   userId: number;
   latitude: number;
   longitude: number;
+  cityName?: string;
   hourly: boolean;
   weatherCode: boolean;
   windSpeed10m: boolean;

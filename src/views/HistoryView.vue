@@ -153,6 +153,7 @@ export default {
             </section>
           </template>
         </Column>
+        <Column field="cityName" header="Ville" style="width: 10%"></Column>
         <Column field="latitude" header="Latitude" style="width: 10%"></Column>
         <Column field="longitude" header="Longitude" style="width: 10%"></Column>
         <Column field="windSpeed10m" header="Vitesse du vent" style="width: 10%">
