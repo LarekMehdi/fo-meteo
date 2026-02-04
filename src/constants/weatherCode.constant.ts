@@ -15,6 +15,8 @@ const weatherIconMap: Record<number, string> = {
   73: '❄️',
   75: '❄️',
   80: '🌦️',
+  81: '🌧️',
+  82: '⛈️',
   95: '⛈️',
 };
 
