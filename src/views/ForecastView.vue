@@ -23,6 +23,7 @@ import { computed, reactive, ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
 import { useQueryClient } from '@tanstack/vue-query';
+import InputSwitch from '@/components/inputs/InputSwitch.vue';
 
 export default {
   setup() {
@@ -147,6 +148,7 @@ export default {
     Title,
     InputText,
     InputNumber,
+    InputSwitch,
     CityAutocomplete,
     ButtonSubmit,
     FormRow,
@@ -186,6 +188,16 @@ export default {
             :validation="v$.longitude"
           />
         </FormRow>
+        <FormRow>
+          <InputSwitch
+            v-model="searchForm.windSpeed10m"
+            name="windSpeed10m"
+            label="Afficher la vitesse du vent"
+            :displayLabel="true"
+            :inline="true"
+          />
+        </FormRow>
+
         <Row>
           <template #left>
             <ButtonSubmit content="Rechercher" />
@@ -211,7 +223,9 @@ export default {
           <span class="text-2xl"> {{ getWeatherIcon(hour.weatherCode) }} </span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
           <span class="text-sm font-semibold"> {{ hour.temperature }}{{ temperatureUnit }} </span>
-          <span class="text-xs text-gray-400">💨 {{ hour.windSpeed10m }}{{ windSpeedUnit }} </span>
+          <span v-if="hour.windSpeed10m" class="text-xs text-gray-400"
+            >💨 {{ hour.windSpeed10m }}{{ windSpeedUnit }}
+          </span>
         </Card>
       </section>
     </Card>

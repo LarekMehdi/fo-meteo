@@ -19,5 +19,5 @@ export interface ForecastFilterInterface {
   longitude: number | null;
   hourly?: boolean;
   weatherCode?: boolean;
-  windSpeed10m?: boolean;
+  windSpeed10m: boolean;
 }

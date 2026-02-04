@@ -61,26 +61,27 @@ export default {
       {{ label }}
     </label>
 
-    <div class="relative w-12 h-7">
+    <label :for="name" class="relative inline-block w-12 h-7 cursor-pointer">
       <input
+        :id="name"
         type="checkbox"
         :name="name"
         :checked="modelValue"
         :disabled="disabled"
         @change="handleChange"
-        class="peer opacity-0 w-0 h-0"
+        class="sr-only peer"
       />
       <div
         :class="[
           'absolute inset-0 rounded-full transition-colors duration-300',
           sliderBg,
-          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
         ]"
       ></div>
       <div
-        class="absolute left-0 top-0.5 w-6 h-6 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-5 peer-disabled:opacity-50"
+        class="absolute left-0.5 top-0.5 w-6 h-6 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-5 shadow-sm"
       ></div>
-    </div>
+    </label>
 
     <small v-if="validation?.$dirty && validation?.$error" class="text-red-500 mt-1 block">
       {{ validation?.$errors[0]?.$message }}
