@@ -170,7 +170,13 @@ export default {
             </section>
           </template>
         </Column>
-        <Column field="windSpeedUnit" header="Unité du vent" style="width: 10%"></Column>
+        <Column field="windSpeedUnit" header="Unité du vent" style="width: 10%">
+          <template #body="slotProps">
+            <section v-if="slotProps.data.windSpeed10m" class="flex items-center gap-8">
+              <p>{{ slotProps.data.windSpeedUnit }}</p>
+            </section>
+          </template>
+        </Column>
         <Column headerStyle="text-align: center" bodyStyle="text-align: center" style="width: 10%">
           <template #header>
             <div class="w-full text-center">Action</div>

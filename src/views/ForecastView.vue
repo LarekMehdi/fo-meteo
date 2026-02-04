@@ -229,6 +229,11 @@ export default {
     </section>
 
     <Card v-if="todayHourlyForecast.length">
+      <Row>
+        <template #left>
+          <p>Aujourd'hui</p>
+        </template>
+      </Row>
       <section class="flex gap-4 overflow-x-auto py-2">
         <Card
           v-for="(hour, index) in todayHourlyForecast"
