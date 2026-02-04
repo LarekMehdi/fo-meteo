@@ -22,11 +22,13 @@ import { required } from '@vuelidate/validators';
 import { computed, reactive, ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
 import { useRoute } from 'vue-router';
+import { useQueryClient } from '@tanstack/vue-query';
 
 export default {
   setup() {
     const toast = useToast();
     const route = useRoute();
+    const queryClient = useQueryClient();
 
     const forecast = ref<ForecastInterface | null>(null);
     const isLoading = ref(false);
@@ -103,6 +105,7 @@ export default {
       try {
         await SearchForecastHistoryService.create(searchForm);
         toast.success('Recherche sauvegardée!');
+        queryClient.invalidateQueries({ queryKey: ['all-histories'] });
       } catch (_e: unknown) {
         toast.error('Impossible de sauvegarder la recherche.');
       }
