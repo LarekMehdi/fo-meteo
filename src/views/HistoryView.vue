@@ -6,6 +6,7 @@ import type { HistoryFilterInterface, PageInterface } from '@/interfaces/filter.
 import type { SearchHistoryInterface } from '@/interfaces/searchHistory.interface';
 import { SearchForecastHistoryService } from '@/services/searchForecastHistory.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { UtilDate } from '@/utils/date.utils';
 import { useQuery, useQueryClient, type UseQueryReturnType } from '@tanstack/vue-query';
 import { AxiosError } from 'axios';
 import Column from 'primevue/column';
@@ -105,6 +106,7 @@ export default {
       replaySearch,
       deleteHistory,
       alternDisplayConfirmDeleteModal,
+      UtilDate,
     };
   },
   components: {
@@ -145,7 +147,7 @@ export default {
         <Column field="createdAt" header="Date" style="width: 10%">
           <template #body="slotProps">
             <section class="flex items-center gap-8">
-              <p>{{ new Date(slotProps.data.createdAt).toLocaleDateString('fr-FR') }}</p>
+              <p>{{ UtilDate.formatToFrString(slotProps.data.createdAt) }}</p>
             </section>
           </template>
         </Column>
