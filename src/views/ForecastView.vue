@@ -199,8 +199,8 @@ export default {
       </form>
     </section>
 
-    <Card>
-      <section v-if="todayHourlyForecast.length" class="flex gap-4 overflow-x-auto py-2">
+    <Card v-if="todayHourlyForecast.length">
+      <section class="flex gap-4 overflow-x-auto py-2">
         <Card
           v-for="(hour, index) in todayHourlyForecast"
           :key="index"
