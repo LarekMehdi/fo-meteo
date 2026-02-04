@@ -4,7 +4,7 @@ import InputText from '../../components/inputs/InputText.vue';
 import Title from '../../components/shared/Title.vue';
 import type { SignupInterface } from '../../interfaces/user.interface';
 import { computed, reactive } from 'vue';
-import { email, maxLength, minLength, required, sameAs } from '@vuelidate/validators';
+import { email, helpers, maxLength, minLength, required, sameAs } from '@vuelidate/validators';
 import Row from '../../components/shared/Row.vue';
 import ButtonSubmit from '../../components/inputs/ButtonSubmit.vue';
 import { withMessage } from '../../utils/helpers/withMessage';
@@ -18,6 +18,7 @@ export default {
   setup() {
     const toast = useToast();
     const router = useRouter();
+    const REGEX_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).{6,}$/;
 
     const passwordRef = computed(() => signupForm.password);
 
@@ -46,11 +47,13 @@ export default {
       },
       password: {
         required: withMessage('Le mot de passe est requis', required),
-        minLength: withMessage('Le mot de passe doit faire au moins 6 caractères', minLength(6)),
+        strongPassword: withMessage(
+          'Le mot de passe doit contenir au moins 6 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial',
+          helpers.regex(REGEX_PASSWORD),
+        ),
       },
       confirmPassword: {
         required: withMessage('La confirmation du mot de passe est requise', required),
-        minLength: withMessage('Le mot de passe doit faire au moins 6 caractères', minLength(6)),
         sameAsPassword: withMessage('Les mots de passe ne correspondent pas', sameAs(passwordRef)),
       },
     };
