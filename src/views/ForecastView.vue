@@ -197,9 +197,9 @@ export default {
           <InputSelect
             v-if="searchForm.windSpeed10m"
             v-model="searchForm.windSpeedUnit"
-            name="status"
-            label="Status"
-            placeholder="Status"
+            name="windSpeedUnit"
+            label="Unité de vitesse"
+            placeholder="Unité de vitesse"
             :inline="true"
             :displayLabel="false"
             :options="getWindSpeedUnitOptions()"
@@ -231,7 +231,7 @@ export default {
         <Card
           v-for="(hour, index) in todayHourlyForecast"
           :key="index"
-          class="min-w-[100px] p-2 flex flex-col items-center gap-1"
+          class="min-w-[130px] p-2 flex flex-col items-center gap-1"
         >
           <span class="text-2xl"> {{ getWeatherIcon(hour.weatherCode) }} </span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
