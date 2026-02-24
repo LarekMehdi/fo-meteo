@@ -67,13 +67,15 @@ export default {
       if (!forecast.value) return [];
       return UtilForecast.getTodayHourlyForecast(forecast.value);
     });
+    //TODO: refacto
     const filteredTodayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
       if (!todayHourlyForecast.value.length) return [];
       const now = new Date();
+      now.setMinutes(0, 0, 0);
       return todayHourlyForecast.value.filter((hour) => {
         const hourDate = new Date(hour.time);
         if (showPastHours.value) return true;
-        return hourDate > now;
+        return hourDate >= now;
       });
     });
     const weeklyForecast = computed<DailyForecastInterface[]>(() => {
@@ -263,6 +265,9 @@ export default {
           v-for="(hour, index) in filteredTodayHourlyForecast"
           :key="index"
           class="min-w-[130px] p-2 flex flex-col items-center gap-1"
+          :class="{
+            'border-2 border-blue-500 shadow-md': UtilDate.isCurrentHour(hour.time),
+          }"
         >
           <span class="text-2xl"> {{ getWeatherIcon(hour.weatherCode) }} </span>
           <span class="text-xs text-gray-400"> {{ new Date(hour.time).getHours() }}h </span>
