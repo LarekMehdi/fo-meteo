@@ -66,7 +66,7 @@ export default {
 
     async function deleteHistory() {
       if (!historyIdToDelete) {
-        toast.error('Pas de dropzone a supprimer');
+        toast.error('Pas de recherche à supprimer');
         return;
       }
 
