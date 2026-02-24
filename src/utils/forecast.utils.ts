@@ -32,6 +32,20 @@ export abstract class UtilForecast {
       );
   }
 
+  static getFilteredTodayHourlyForecast(
+    hours: HourlyForecastDisplayInterface[],
+    showPastHours: boolean,
+  ): HourlyForecastDisplayInterface[] {
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+
+    return hours.filter((hour) => {
+      const hourDate = new Date(hour.time);
+      if (showPastHours) return true;
+      return hourDate >= now;
+    });
+  }
+
   /** WEEK **/
   static getWeeklyForecast(forecast: ForecastInterface): DailyForecastInterface[] {
     const today = new Date().toISOString().split('T')[0];

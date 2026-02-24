@@ -67,16 +67,12 @@ export default {
       if (!forecast.value) return [];
       return UtilForecast.getTodayHourlyForecast(forecast.value);
     });
-    //TODO: refacto
     const filteredTodayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
       if (!todayHourlyForecast.value.length) return [];
-      const now = new Date();
-      now.setMinutes(0, 0, 0);
-      return todayHourlyForecast.value.filter((hour) => {
-        const hourDate = new Date(hour.time);
-        if (showPastHours.value) return true;
-        return hourDate >= now;
-      });
+      return UtilForecast.getFilteredTodayHourlyForecast(
+        todayHourlyForecast.value,
+        showPastHours.value,
+      );
     });
     const weeklyForecast = computed<DailyForecastInterface[]>(() => {
       if (!forecast.value) return [];
