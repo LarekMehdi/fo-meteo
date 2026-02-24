@@ -38,8 +38,9 @@ export default {
     const queryClient = useQueryClient();
 
     const forecast = ref<ForecastInterface | null>(null);
-    const isLoading = ref(false);
-    const displayWeekResults = ref(false);
+    const isLoading = ref<boolean>(false);
+    const displayWeekResults = ref<boolean>(false);
+    const showPastHours = ref<boolean>(false);
 
     // FORM
     const searchForm = reactive<ForecastFilterInterface>({
@@ -61,9 +62,19 @@ export default {
     const v$ = useVuelidate(searchRules, searchForm);
 
     // COMPUTED
+
     const todayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
       if (!forecast.value) return [];
       return UtilForecast.getTodayHourlyForecast(forecast.value);
+    });
+    const filteredTodayHourlyForecast = computed<HourlyForecastDisplayInterface[]>(() => {
+      if (!todayHourlyForecast.value.length) return [];
+      const now = new Date();
+      return todayHourlyForecast.value.filter((hour) => {
+        const hourDate = new Date(hour.time);
+        if (showPastHours.value) return true;
+        return hourDate > now;
+      });
     });
     const weeklyForecast = computed<DailyForecastInterface[]>(() => {
       if (!forecast.value) return [];
@@ -143,6 +154,8 @@ export default {
       forecast,
       displayWeekResults,
       weeklyForecast,
+      showPastHours,
+      filteredTodayHourlyForecast,
       getWeatherIcon,
       searchForecast,
       handleCitySelect,
@@ -216,7 +229,14 @@ export default {
             :options="getWindSpeedUnitOptions()"
           />
         </FormRow>
-
+        <FormRow :cols="2"> </FormRow>
+        <InputSwitch
+          v-model="showPastHours"
+          name="showPastHours"
+          label="Afficher les heures passées"
+          :displayLabel="true"
+          :inline="true"
+        />
         <Row>
           <template #left>
             <ButtonSubmit content="Rechercher" />
@@ -240,7 +260,7 @@ export default {
       </Row>
       <section class="flex gap-4 overflow-x-auto py-2">
         <Card
-          v-for="(hour, index) in todayHourlyForecast"
+          v-for="(hour, index) in filteredTodayHourlyForecast"
           :key="index"
           class="min-w-[130px] p-2 flex flex-col items-center gap-1"
         >
